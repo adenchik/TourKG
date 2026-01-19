@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}TourKG - Туры по Кыргызстану{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+    <!-- Background Image -->
+    <div class="absolute inset-0">
+        <img src="{{ MEDIA_URL }}IMG_7270.JPG" alt="Кыргызстан" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-b from-dark-900/70 via-dark-900/50 to-dark-900"></div>
+    </div>
+
+    <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
+        <h1 class="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 tracking-tight opacity-0 animate-fade-in-up" style="animation-delay: 0.1s; animation-fill-mode: forwards;">
+            Откройте для себя
+            <span class="gradient-text block mt-2">Кыргызстан</span>
+        </h1>
+        <p class="text-lg md:text-xl text-white/70 mb-10 max-w-2xl mx-auto opacity-0 animate-fade-in-up" style="animation-delay: 0.3s; animation-fill-mode: forwards;">
+            Незабываемые туры по горам, озерам и природным достопримечательностям
+        </p>
+        <a href="#tours" class="btn-glow inline-block text-sm font-medium opacity-0 animate-fade-in-up" style="animation-delay: 0.5s; animation-fill-mode: forwards;">
+            Смотреть туры
+        </a>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+        </svg>
+    </div>
+</section>
+
+<!-- Tours Section -->
+<section id="tours" class="py-20 md:py-28 px-4">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                Наши <span class="gradient-text">туры</span>
+            </h2>
+            <p class="text-white/50 max-w-xl mx-auto">
+                Выберите тур и отправляйтесь в путешествие по самым красивым местам
+            </p>
+        </div>
+
+        {% if tours %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {% for tour in tours %}
+            <article class="glass rounded-2xl overflow-hidden card-hover group">
+                <div class="relative h-56 overflow-hidden">
+                    {% if tour.image %}
+                    <img src="{{ tour.image.url }}" alt="{{ tour.title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    {% else %}
+                    <img src="{{ MEDIA_URL }}IMG_7271.JPG" alt="{{ tour.title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    {% endif %}
+                    <div class="absolute inset-0 bg-gradient-to-t from-dark-900/90 via-dark-900/20 to-transparent"></div>
+                    <div class="absolute top-4 right-4 glass-light px-3 py-1 rounded-full text-xs font-medium text-white">
+                        {{ tour.price|floatformat:0 }} сом
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center text-xs text-cyan-400 mb-2">
+                        <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        </svg>
+                        {{ tour.location }}
+                    </div>
+                    <h3 class="text-lg font-semibold text-white mb-2">{{ tour.title }}</h3>
+                    <p class="text-white/50 text-sm mb-4 line-clamp-2">
+                        {{ tour.short_description|default:tour.description|truncatewords:15 }}
+                    </p>
+                    <div class="flex items-center justify-between pt-4 border-t border-white/10">
+                        <div class="flex items-center text-xs text-white/40">
+                            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            {{ tour.date_start|date:"d M Y" }}
+                        </div>
+                        <a href="{{ tour.get_absolute_url }}" class="btn-glow text-xs px-4 py-2">
+                            Подробнее
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-16 glass rounded-2xl">
+            <svg class="w-16 h-16 text-white/20 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+            </svg>
+            <h3 class="text-lg font-medium text-white mb-2">Туры скоро появятся</h3>
+            <p class="text-white/50 text-sm">Мы готовим для вас незабываемые путешествия</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Gallery Section -->
+<section class="py-20 px-4">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                <span class="gradient-text">Галерея</span>
+            </h2>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="relative group overflow-hidden rounded-xl aspect-square">
+                <img src="{{ MEDIA_URL }}IMG_7104.JPG" alt="Кыргызстан" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                <div class="absolute inset-0 bg-dark-900/40 group-hover:bg-dark-900/20 transition-colors"></div>
+            </div>
+            <div class="relative group overflow-hidden rounded-xl aspect-square">
+                <img src="{{ MEDIA_URL }}IMG_7105.JPG" alt="Кыргызстан" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                <div class="absolute inset-0 bg-dark-900/40 group-hover:bg-dark-900/20 transition-colors"></div>
+            </div>
+            <div class="relative group overflow-hidden rounded-xl aspect-square">
+                <img src="{{ MEDIA_URL }}IMG_7270.JPG" alt="Кыргызстан" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                <div class="absolute inset-0 bg-dark-900/40 group-hover:bg-dark-900/20 transition-colors"></div>
+            </div>
+            <div class="relative group overflow-hidden rounded-xl aspect-square">
+                <img src="{{ MEDIA_URL }}IMG_7314.JPG" alt="Кыргызстан" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                <div class="absolute inset-0 bg-dark-900/40 group-hover:bg-dark-900/20 transition-colors"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-20 md:py-28 px-4">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                Почему <span class="gradient-text">выбирают нас</span>
+            </h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="glass rounded-2xl p-8 text-center card-hover">
+                <div class="w-16 h-16 glass-light rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-white mb-3">Безопасность</h3>
+                <p class="text-white/50 text-sm">Опытные гиды и проверенные маршруты для вашей безопасности</p>
+            </div>
+            <div class="glass rounded-2xl p-8 text-center card-hover">
+                <div class="w-16 h-16 glass-light rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-white mb-3">Лучшие цены</h3>
+                <p class="text-white/50 text-sm">Доступные цены без скрытых платежей</p>
+            </div>
+            <div class="glass rounded-2xl p-8 text-center card-hover">
+                <div class="w-16 h-16 glass-light rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-white mb-3">Незабываемые впечатления</h3>
+                <p class="text-white/50 text-sm">Уникальные маршруты и яркие эмоции</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 px-4">
+    <div class="max-w-4xl mx-auto">
+        <div class="glass rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
+            <div class="absolute -top-20 -right-20 w-60 h-60 bg-cyan-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-20 -left-20 w-60 h-60 bg-blue-500/10 rounded-full blur-3xl"></div>
+            <div class="relative z-10">
+                <h2 class="text-2xl md:text-3xl font-bold mb-4">
+                    Готовы к приключению?
+                </h2>
+                <p class="text-white/60 mb-8 max-w-xl mx-auto">
+                    Свяжитесь с нами и мы поможем выбрать идеальный тур для вас
+                </p>
+                <a href="#contact" class="btn-glow inline-block">
+                    Связаться с нами
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

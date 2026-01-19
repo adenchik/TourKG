@@ -1,0 +1,10 @@
+[project]
+name = "tourkg"
+version = "0.1.0"
+description = "Веб-приложение для продажи туров по Кыргызстану"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "django>=5.0",
+    "pillow>=10.0",
+]

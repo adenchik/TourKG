@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ tour.title }} - TourKG{% endblock %}
+
+{% block content %}
+<article class="pb-24 md:pb-8">
+    <!-- Hero Image -->
+    <div class="relative h-[50vh] min-h-[400px] overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/50 to-transparent z-10"></div>
+        {% if tour.image %}
+        <img src="{{ tour.image.url }}" alt="{{ tour.title }}" class="w-full h-full object-cover">
+        {% else %}
+        <img src="{{ MEDIA_URL }}IMG_7271.JPG" alt="{{ tour.title }}" class="w-full h-full object-cover">
+        {% endif %}
+        <div class="absolute bottom-0 left-0 right-0 z-20 p-6 md:p-8">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex items-center text-cyan-400 text-sm mb-3">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    </svg>
+                    {{ tour.location }}
+                </div>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight">{{ tour.title }}</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 py-8 md:py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Content -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Quick Info -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="glass rounded-xl p-4 text-center">
+                        <div class="text-cyan-400 text-xs font-medium uppercase tracking-wide mb-1">Дата</div>
+                        <div class="text-white font-semibold text-sm">{{ tour.date_start|date:"d M Y" }}</div>
+                    </div>
+                    <div class="glass rounded-xl p-4 text-center">
+                        <div class="text-cyan-400 text-xs font-medium uppercase tracking-wide mb-1">Время</div>
+                        <div class="text-white font-semibold text-sm">{{ tour.date_start|time:"H:i" }}</div>
+                    </div>
+                    <div class="glass rounded-xl p-4 text-center">
+                        <div class="text-cyan-400 text-xs font-medium uppercase tracking-wide mb-1">Мест</div>
+                        <div class="text-white font-semibold text-sm">{{ tour.available_seats }}/{{ tour.count_max }}</div>
+                    </div>
+                    <div class="glass rounded-xl p-4 text-center">
+                        <div class="text-cyan-400 text-xs font-medium uppercase tracking-wide mb-1">Цена</div>
+                        <div class="text-white font-semibold text-sm">{{ tour.price|floatformat:0 }} сом</div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="glass rounded-2xl p-6">
+                    <h2 class="text-xl font-bold text-white mb-4">Описание тура</h2>
+                    <div class="text-white/70 text-sm leading-relaxed">
+                        {{ tour.description|linebreaks }}
+                    </div>
+                </div>
+
+                <!-- Conditions -->
+                {% if tour.included or tour.not_included %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% if tour.included %}
+                    <div class="glass rounded-2xl p-5 border-l-4 border-cyan-500">
+                        <h3 class="font-semibold text-white mb-3 flex items-center text-sm">
+                            <svg class="w-4 h-4 mr-2 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Включено
+                        </h3>
+                        <div class="text-white/60 text-sm">
+                            {{ tour.included|linebreaks }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if tour.not_included %}
+                    <div class="glass rounded-2xl p-5 border-l-4 border-white/20">
+                        <h3 class="font-semibold text-white mb-3 flex items-center text-sm">
+                            <svg class="w-4 h-4 mr-2 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                            Не включено
+                        </h3>
+                        <div class="text-white/60 text-sm">
+                            {{ tour.not_included|linebreaks }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Gallery -->
+                {% if tour.images.exists %}
+                <div class="glass rounded-2xl p-6">
+                    <h2 class="text-xl font-bold text-white mb-4">Галерея</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {% for image in tour.images.all %}
+                        <img src="{{ image.image.url }}" alt="{{ tour.title }}" class="w-full h-32 object-cover rounded-xl cursor-pointer hover:opacity-80 transition-opacity" onclick="openGallery('{{ image.image.url }}')">
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Sidebar - Desktop -->
+            <div class="hidden lg:block">
+                <div class="glass rounded-2xl p-6 sticky top-24">
+                    <div class="text-2xl font-bold gradient-text mb-1">
+                        {{ tour.price|floatformat:0 }} сом
+                    </div>
+                    <div class="text-white/50 text-sm mb-6">за 1 человека</div>
+                    <button id="buyBtn" class="w-full btn-glow py-3 font-medium text-sm">
+                        Купить тур
+                    </button>
+                    <p class="text-xs text-white/40 text-center mt-4">
+                        Осталось {{ tour.available_seats }} мест из {{ tour.count_max }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Sticky Button -->
+    <div class="fixed bottom-0 left-0 right-0 glass-dark p-4 lg:hidden z-40">
+        <div class="flex items-center justify-between max-w-4xl mx-auto">
+            <div>
+                <div class="text-xl font-bold gradient-text">{{ tour.price|floatformat:0 }} сом</div>
+                <div class="text-xs text-white/50">за 1 человека</div>
+            </div>
+            <button id="buyBtnMobile" class="btn-glow px-6 py-3 font-medium text-sm">
+                Купить тур
+            </button>
+        </div>
+    </div>
+</article>
+
+<!-- Buy Modal -->
+<div id="buyModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="glass rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-white">Оформление заказа</h2>
+                <button id="closeModal" class="text-white/40 hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="glass-light rounded-xl p-4 mb-6">
+                <div class="font-semibold text-white text-sm">{{ tour.title }}</div>
+                <div class="text-xs text-cyan-400 mt-1">{{ tour.date_start|date:"d M Y, H:i" }}</div>
+            </div>
+
+            <form method="post" action="{% url 'tours:order' tour.slug %}" class="space-y-4">
+                {% csrf_token %}
+
+                <div>
+                    <label class="block text-xs font-medium text-white/70 uppercase tracking-wide mb-2">Имя и Фамилия</label>
+                    {{ form.customer_name }}
+                    {% if form.customer_name.errors %}
+                    <p class="text-red-400 text-xs mt-1">{{ form.customer_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-white/70 uppercase tracking-wide mb-2">Телефон</label>
+                    {{ form.phone }}
+                    {% if form.phone.errors %}
+                    <p class="text-red-400 text-xs mt-1">{{ form.phone.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-white/70 uppercase tracking-wide mb-2">Email</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <p class="text-red-400 text-xs mt-1">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-white/70 uppercase tracking-wide mb-2">Количество билетов</label>
+                    {{ form.quantity }}
+                    {% if form.quantity.errors %}
+                    <p class="text-red-400 text-xs mt-1">{{ form.quantity.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="border-t border-white/10 pt-4 mt-4">
+                    <div class="flex justify-between items-center mb-3 text-sm">
+                        <span class="text-white/50">Цена за билет:</span>
+                        <span class="font-medium text-white">{{ tour.price|floatformat:0 }} сом</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium text-white">Итого:</span>
+                        <span id="totalPrice" class="text-xl font-bold gradient-text">{{ tour.price|floatformat:0 }} сом</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full btn-glow py-3 font-medium text-sm mt-4">
+                    Оформить заказ
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Gallery Modal -->
+<div id="galleryModal" class="fixed inset-0 bg-black/95 z-50 hidden items-center justify-center p-4">
+    <button id="closeGallery" class="absolute top-4 right-4 text-white/60 hover:text-white transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+    </button>
+    <img id="galleryImage" src="" alt="" class="max-w-full max-h-full object-contain rounded-lg">
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const modal = document.getElementById('buyModal');
+    const buyBtn = document.getElementById('buyBtn');
+    const buyBtnMobile = document.getElementById('buyBtnMobile');
+    const closeModal = document.getElementById('closeModal');
+    const quantityInput = document.querySelector('input[name="quantity"]');
+    const totalPrice = document.getElementById('totalPrice');
+    const pricePerPerson = {{ tour.price }};
+
+    function openModal() {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModalFn() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+    }
+
+    if (buyBtn) buyBtn.addEventListener('click', openModal);
+    if (buyBtnMobile) buyBtnMobile.addEventListener('click', openModal);
+    closeModal.addEventListener('click', closeModalFn);
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModalFn();
+    });
+
+    quantityInput.addEventListener('input', () => {
+        const qty = parseInt(quantityInput.value) || 1;
+        totalPrice.textContent = (pricePerPerson * qty).toLocaleString() + ' сом';
+    });
+
+    // Gallery
+    const galleryModal = document.getElementById('galleryModal');
+    const galleryImage = document.getElementById('galleryImage');
+    const closeGallery = document.getElementById('closeGallery');
+
+    function openGallery(src) {
+        galleryImage.src = src;
+        galleryModal.classList.remove('hidden');
+        galleryModal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+
+    closeGallery.addEventListener('click', () => {
+        galleryModal.classList.add('hidden');
+        galleryModal.classList.remove('flex');
+        document.body.style.overflow = '';
+    });
+
+    galleryModal.addEventListener('click', (e) => {
+        if (e.target === galleryModal) {
+            galleryModal.classList.add('hidden');
+            galleryModal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+    });
+</script>
+{% endblock %}
