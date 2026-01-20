@@ -154,20 +154,3 @@
 * Код должен быть чистым, соблюдать PEP8.
 * SQLite файл должен быть исключен из Git, если планируется деплой, но для локальной разработки `db.sqlite3` добавляется
   в `.gitignore`.
-
-***
-
-### Примечание к реализации
-
-Так как вы не используете JS-фреймворки, для интерактивности (например, модальное окно покупки или галерея) используйте
-обычный JavaScript:
-
-```javascript
-// Пример для Tailwind: открытие модалки
-const modal = document.getElementById('buyModal');
-const btn = document.getElementById('buyBtn');
-btn.addEventListener('click', () => {
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-});
-```
